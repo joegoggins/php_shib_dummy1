@@ -1,0 +1,3 @@
+[submodule "config/capistrano"]
+	path = config/capistrano
+	url = git@git.asr.umn.edu:lib_capistrano_template
