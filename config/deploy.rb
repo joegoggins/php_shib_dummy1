@@ -11,8 +11,14 @@ set :use_sudo,              false
 role :web, "shib-local-vm1.asr.umn.edu"                          # Your HTTP server, Apache/etc
 role :app, "shib-local-vm1.asr.umn.edu"                          # This may be the same as your `Web` server
 
-after  'deploy', 'restart_shibd'
+before 'deploy', 'copy_shib_files'
+task :copy_shib_files do
+  run "cp shibboleths_lil_helper/generated/default/shib-local-vm1.asr.umn.edu/shibboleth2.xml /etc/shibboleth/"
+  run "cp shibboleths_lil_helper/generated/default/shib-local-vm1.asr.umn.edu/attribute-map.xml /etc/shibboleth/"
+  run "cp shibboleths_lil_helper/generated/default/shib-local-vm1.asr.umn.edu/idp_metadata.xml /etc/shibboleth/"
+end
 
+after  'deploy', 'restart_shibd'
 task :restart_shibd do
   run "service shibd restart"
 end
