@@ -11,15 +11,19 @@ set :use_sudo,              false
 role :web, "shib-local-vm1.asr.umn.edu"                          # Your HTTP server, Apache/etc
 role :app, "shib-local-vm1.asr.umn.edu"                          # This may be the same as your `Web` server
 
-before 'deploy', 'copy_shib_files'
-task :copy_shib_files do
-  run "cp shibboleths_lil_helper/generated/default/shib-local-vm1.asr.umn.edu/shibboleth2.xml /etc/shibboleth/"
-  run "cp shibboleths_lil_helper/generated/default/shib-local-vm1.asr.umn.edu/attribute-map.xml /etc/shibboleth/"
-  run "cp shibboleths_lil_helper/generated/default/shib-local-vm1.asr.umn.edu/idp_metadata.xml /etc/shibboleth/"
-end
+# before 'deploy', 'copy_shib_files'
+# task :copy_shib_files do
+# #  run "cp shibboleths_lil_helper/generated/default/shib-local-vm1.asr.umn.edu/attribute-map.xml /etc/shibboleth/"
+# #  run "cp shibboleths_lil_helper/generated/default/shib-local-vm1.asr.umn.edu/idp_metadata.xml /etc/shibboleth/"
+# end
 
 after  'deploy', 'restart_shibd'
 task :restart_shibd do
+  path = "#{release_path}/shibboleths_lil_helper/generated/default/shib-local-vm1.asr.umn.edu/"
+  files = %w(shibboleth2.xml attribute-map.xml idp_metadata.xml)
+  files.each do |f|
+    run "cp #{path}#{f} /etc/shibboleth/"
+  end
   run "service shibd restart"
 end
 # if you're still using the script/reaper helper you will need
